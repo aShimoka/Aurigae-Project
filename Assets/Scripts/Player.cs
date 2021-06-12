@@ -17,20 +17,25 @@
 //         else {  rigidbody.bodyType = RigidbodyType2D.Dynamic;  }
 //     }
 
-//     public void OnDrop(){
-//         falling = !falling;
-//         if(falling){
-//             rigidbody.bodyType = RigidbodyType2D.Dynamic;
-//             rigidbody.gravityScale = 1;
-//         }
-//         else{
-//             rigidbody.bodyType = RigidbodyType2D.Kinematic;
-//             rigidbody.gravityScale = 0;
-//         }
-//     }
-//     public void FixedUpdate() {
-//         if(rigidbody.gravityScale == 0){
-//             rigidbody.velocity = lastInput * speed * Time.fixedDeltaTime;
-//         }
-//     }
-// }
+    public void OnDrop(){
+        falling = !falling;
+        if(falling){
+            rigidbody.bodyType = RigidbodyType2D.Dynamic;
+            rigidbody.gravityScale = 1;
+        }
+        else{
+            rigidbody.bodyType = RigidbodyType2D.Kinematic;
+            rigidbody.gravityScale = 0;
+        }
+    }
+
+    public void OnBreak()
+    {
+        Rope.RopeComponent.onBreak.Invoke();
+    }
+    public void FixedUpdate() {
+        if(rigidbody.gravityScale == 0){
+            rigidbody.velocity = lastInput * speed * Time.fixedDeltaTime;
+        }
+    }
+}

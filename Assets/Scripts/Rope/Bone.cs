@@ -10,6 +10,7 @@ public class Bone : MonoBehaviour {
     private Rigidbody2D rigidbody;
     private MeshRenderer meshRenderer;
     public float maxDistance;
+    public float warnDistance;
 
     public RopeComponent.BreakEvent onBreak;
     
@@ -36,35 +37,19 @@ public class Bone : MonoBehaviour {
     }
 
     public void OnDrawGizmos() {
-        // Gizmos.color = Color.red;
-        // Gizmos.DrawLine(rigidbody.position, parent.position);
-        // Gizmos.color = Color.blue;
-        // Gizmos.DrawLine(rigidbody.position, child.position);
 
-        // Vector2 toParent = (rigidbody.position - (Vector2)parent.position);
-        // Vector2 toChild = (rigidbody.position - (Vector2)child.position);
-
-        //float parentDiscrepency = distance - toParent.magnitude;
-        //float childDiscrepency = distance - toChild.magnitude;
     }
 
     public void Compute() {
-        // Get the distance to both parent and child.
-        Vector2 toChild = (rigidbody.position - (Vector2)child.position);
 
         // Check for rope break
-        if(parent != null){
+        /*if(parent != null && onBreak != null){
             Vector2 toParent = (rigidbody.position - (Vector2)parent.position);
-        
+
             if(toParent.magnitude > maxDistance){
-                onBreak.Invoke(parent.GetComponent<Bone>(), this);
+                onBreak.Invoke();
             }
-        }
-        if(child != null){
-            if(toChild.magnitude > maxDistance){
-                onBreak.Invoke(this, child.GetComponent<Bone>());
-            }
-        }
+        }*/
     }
 
     public void FixedUpdate(){
