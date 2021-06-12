@@ -1,34 +1,50 @@
 using UnityEngine;
 using Rope;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 public class RopeComponent: MonoBehaviour {
     public int Length;
     public End Start;
     public End End;
     public GameObject BonePrefab;
+    static BreakEvent onBreak = new RopeComponent.BreakEvent();
+
+    public bool broken;
 
     // public List<Bone> bones;
 
     public void Awake() {
+        broken = false;
         // bones = new List<Bone>();
-        Joint2D previousJoint = Start.link;
+        Bone previous = Start.link;
         for (int i = 0; i < Length; i++) {
             GameObject bone = GameObject.Instantiate(BonePrefab);
             bone.name = $"Bone #{i}";
             bone.transform.SetParent(transform);
             bone.transform.position = Vector2.Lerp(End.transform.position, Start.transform.position, (float)i / (Length - 1)) + Vector2.down * 10;
 
-            Joint2D joint = bone.GetComponent<Joint2D>();
+            Bone currentBone = bone.GetComponent<Bone>();
+            currentBone.AttachParent(previous);
+            currentBone.onBreak = onBreak;
 
-            previousJoint.connectedBody = bone.GetComponent<Rigidbody2D>();
-            previousJoint = joint;
+            previous = currentBone;
         }
 
-        previousJoint.connectedBody = End.link.GetComponent<Rigidbody2D>();
+        End.link.AttachParent(previous);
+        onBreak.AddListener(BreakRope);
+
     }
 
-    public void FixedUpdate() {
-        // foreach (Bone b in bones) { b.Compute(); }
+    public class BreakEvent : UnityEvent<Bone, Bone> {
+        
     }
+
+    public void BreakRope(Bone firstBone, Bone secondBone){
+        if(!broken){
+            broken  = true;
+            secondBone.DetachParent();
+        }
+    }
+
 }

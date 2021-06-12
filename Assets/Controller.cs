@@ -25,6 +25,14 @@ public class @Controller : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Drop"",
+                    ""type"": ""Button"",
+                    ""id"": ""d061b657-dec0-4706-906b-5fe7814e5976"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -93,6 +101,28 @@ public class @Controller : IInputActionCollection, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2ace938b-9fa8-4da4-8d5e-b565ce5e09bc"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aafcfde6-7971-437d-a52f-ea6b84dcba9e"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -102,6 +132,7 @@ public class @Controller : IInputActionCollection, IDisposable
         // Whitebox
         m_Whitebox = asset.FindActionMap("Whitebox", throwIfNotFound: true);
         m_Whitebox_Move = m_Whitebox.FindAction("Move", throwIfNotFound: true);
+        m_Whitebox_Drop = m_Whitebox.FindAction("Drop", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -152,11 +183,13 @@ public class @Controller : IInputActionCollection, IDisposable
     private readonly InputActionMap m_Whitebox;
     private IWhiteboxActions m_WhiteboxActionsCallbackInterface;
     private readonly InputAction m_Whitebox_Move;
+    private readonly InputAction m_Whitebox_Drop;
     public struct WhiteboxActions
     {
         private @Controller m_Wrapper;
         public WhiteboxActions(@Controller wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Whitebox_Move;
+        public InputAction @Drop => m_Wrapper.m_Whitebox_Drop;
         public InputActionMap Get() { return m_Wrapper.m_Whitebox; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -169,6 +202,9 @@ public class @Controller : IInputActionCollection, IDisposable
                 @Move.started -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnMove;
                 @Move.performed -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnMove;
                 @Move.canceled -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnMove;
+                @Drop.started -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnDrop;
+                @Drop.performed -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnDrop;
+                @Drop.canceled -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnDrop;
             }
             m_Wrapper.m_WhiteboxActionsCallbackInterface = instance;
             if (instance != null)
@@ -176,6 +212,9 @@ public class @Controller : IInputActionCollection, IDisposable
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
+                @Drop.started += instance.OnDrop;
+                @Drop.performed += instance.OnDrop;
+                @Drop.canceled += instance.OnDrop;
             }
         }
     }
@@ -183,5 +222,6 @@ public class @Controller : IInputActionCollection, IDisposable
     public interface IWhiteboxActions
     {
         void OnMove(InputAction.CallbackContext context);
+        void OnDrop(InputAction.CallbackContext context);
     }
 }

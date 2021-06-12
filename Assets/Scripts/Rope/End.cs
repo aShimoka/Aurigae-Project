@@ -5,7 +5,7 @@ namespace Rope {
 public class End : MonoBehaviour {
     public Transform parent;
     public Transform child;
-    public Joint2D link;
+    public Bone link;
 
     /// <summary>
     /// Binds the end of the rope to a given transform.

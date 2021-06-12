@@ -49,7 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parent: {fileID: 4812145272362154984}
   child: {fileID: 0}
-  link: {fileID: 8503082635178340214}
+  link: {fileID: 7984804658159579583}
 --- !u!33 &4812145272362154986
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -214,8 +214,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5159987319281685726, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
   m_PrefabInstance: {fileID: 3325439429195550845}
   m_PrefabAsset: {fileID: 0}
---- !u!233 &8503082635178340214 stripped
-HingeJoint2D:
-  m_CorrespondingSourceObject: {fileID: 6352134929779769099, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
+--- !u!114 &7984804658159579583 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4677529184442720706, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
   m_PrefabInstance: {fileID: 3325439429195550845}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfb765170d6224d638dea24e07459be1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
