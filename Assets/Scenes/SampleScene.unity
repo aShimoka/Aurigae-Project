@@ -824,10 +824,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a52eb54d50164f0dbbea0c7121d3045, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rigidbody: {fileID: 0}
-  speed: 500
-  lastInput: {x: 0, y: 0}
-  falling: 0
 --- !u!114 &1807876697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -863,6 +859,34 @@ Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 537806306264260805, guid: 1a1a09a4156994da3863b0a3477e11cf, type: 3}
   m_PrefabInstance: {fileID: 4812145272245020428}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1807876699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1807876695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b1c29cfd369244a0b8d2832d83f4fa2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0
+  reach: 0
+  slowPercentile: 0
+  falling: 0
+--- !u!114 &1807876700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1807876695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 288cc5f82248141b6aaec81eaa7c0808, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1950881156
 GameObject:
   m_ObjectHideFlags: 0
@@ -962,7 +986,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4812145272362154984, guid: 1a1a09a4156994da3863b0a3477e11cf, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.8164941
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4812145272362154984, guid: 1a1a09a4156994da3863b0a3477e11cf, type: 3}
       propertyPath: m_LocalRotation.x
@@ -974,7 +998,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4812145272362154984, guid: 1a1a09a4156994da3863b0a3477e11cf, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.5773485
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4812145272362154984, guid: 1a1a09a4156994da3863b0a3477e11cf, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -986,7 +1010,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4812145272362154984, guid: 1a1a09a4156994da3863b0a3477e11cf, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 180
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4812145272362154987, guid: 1a1a09a4156994da3863b0a3477e11cf, type: 3}
       propertyPath: link

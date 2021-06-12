@@ -63,6 +63,8 @@ class PlayerMovement: MonoBehaviour {
             [Range(0f, 1f)]
             public float slowPercentile;
 
+    public bool falling;
+
         // -- Public Attributes --
             /// <summary> Rigidbody of the player object. </summary>
             public new Rigidbody2D rigidbody { get; private set; }
@@ -139,28 +141,48 @@ class PlayerMovement: MonoBehaviour {
                 }
             }
 
+            public void OnDrop(){
+                falling = !falling;
+                if(falling){
+                    rigidbody.bodyType = RigidbodyType2D.Dynamic;
+                    rigidbody.gravityScale = 1;
+                }
+                else{
+                    rigidbody.gravityScale = 0;
+                }
+            }
+
+            public void OnBreak()
+            {
+                Rope.RopeComponent.onBreak.Invoke();
+            }
+
             /// <summary>
             /// Called on a fixed timer for physics simulations.
             /// </summary>
             public void FixedUpdate() {
-                // Check if the body is dynamic.
-                if (this.rigidbody.bodyType == RigidbodyType2D.Dynamic) {
-                    // Cap the movement speed of the element.
-                    this.rigidbody.velocity = this._lastInput * this.speed;
+                if (rigidbody.gravityScale == 0)
+                {
+                    // Check if the body is dynamic.
+                    if (this.rigidbody.bodyType == RigidbodyType2D.Dynamic)
+                    {
+                        // Cap the movement speed of the element.
+                        this.rigidbody.velocity = this._lastInput * this.speed;
 
-                    // Update the closest elements.
-                    this._UpdateClosestGrips(this.rigidbody.position + this.rigidbody.velocity * Time.fixedDeltaTime);
-                    this._joints[0].enabled = this.closestGrips.Item1 != null;
-                    this._joints[0].connectedBody = this.closestGrips.Item1?.GetComponent<Rigidbody2D>();
-                    this._joints[1].enabled = this.closestGrips.Item2 != null;
-                    this._joints[1].connectedBody = this.closestGrips.Item2?.GetComponent<Rigidbody2D>();
-                    this._joints[2].enabled = this.closestGrips.Item3 != null;
-                    this._joints[2].connectedBody = this.closestGrips.Item3?.GetComponent<Rigidbody2D>();
-                    this._joints[3].enabled = this.closestGrips.Item4 != null;
-                    this._joints[3].connectedBody = this.closestGrips.Item4?.GetComponent<Rigidbody2D>();
+                        // Update the closest elements.
+                        this._UpdateClosestGrips(this.rigidbody.position + this.rigidbody.velocity * Time.fixedDeltaTime);
+                        this._joints[0].enabled = this.closestGrips.Item1 != null;
+                        this._joints[0].connectedBody = this.closestGrips.Item1?.GetComponent<Rigidbody2D>();
+                        this._joints[1].enabled = this.closestGrips.Item2 != null;
+                        this._joints[1].connectedBody = this.closestGrips.Item2?.GetComponent<Rigidbody2D>();
+                        this._joints[2].enabled = this.closestGrips.Item3 != null;
+                        this._joints[2].connectedBody = this.closestGrips.Item3?.GetComponent<Rigidbody2D>();
+                        this._joints[3].enabled = this.closestGrips.Item4 != null;
+                        this._joints[3].connectedBody = this.closestGrips.Item4?.GetComponent<Rigidbody2D>();
 
-                    // If there is no grip nearby stop any movement.
-                    if (this.closestGrips.Item1 == null) { this.rigidbody.velocity = Vector2.zero; }
+                        // If there is no grip nearby stop any movement.
+                        if (this.closestGrips.Item1 == null) { this.rigidbody.velocity = Vector2.zero; }
+                    }
                 }
             }
 
