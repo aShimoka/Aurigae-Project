@@ -38,10 +38,10 @@ public class PlayerIK: MonoBehaviour {
                 }
             }
         // -- Public Methods --
-            public void Grip(Tuple<Grip, Grip, Grip, Grip> grips) {
+            public void Grip(Grip[] grips) {
                 // Store the grip's transforms.
-                this._leftHand  = grips.Item1?.transform;
-                this._rightHand = grips.Item2?.transform;
+                if (grips.Length >= 1) { this._leftHand  = grips[0].transform; } else { this._leftHand  = null; }
+                if (grips.Length >= 2) { this._rightHand = grips[1].transform; } else { this._rightHand = null; }
             }
         // -- Private Methods --
     // --- /Methods ---

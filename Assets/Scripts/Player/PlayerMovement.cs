@@ -2,58 +2,24 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
-#if UNITY_EDITOR
-using UnityEditor;
-/// <summary>
-/// Inspector class used to edit the <see cref="PlayerMovement"/> component.
-/// </summary>
-[CustomEditor(typeof(PlayerMovement))]
-public class PlayerMovementInspector: Editor {
-    // ---  Attributes ---
-        // -- Private Attributes --
-            /// <summary> Is set if the grips foldout is visible. </summary>
-            private bool _showGrips = false;
-    // --- /Attributes ---
-
-    // ---  Methods ---
-        // -- Unity Events --
-            /// <summary> Draws the inspector GUI. </summary>
-            public override void OnInspectorGUI() {
-                // Draw the default inspector.
-                DrawDefaultInspector();
-
-                // Draw all the closest grips.
-                if (this._showGrips = EditorGUILayout.Foldout(this._showGrips, "Test")) {
-                    PlayerMovement target = (PlayerMovement)this.target;
-                    if (target.closestGrips.Item1 != null) {
-                        EditorGUILayout.Vector2Field("First Closest", target.closestGrips.Item1.transform.position);
-                    }
-                    if (target.closestGrips.Item2 != null) {
-                        EditorGUILayout.Vector2Field("Second Closest", target.closestGrips.Item2.transform.position);
-                    }
-                    if (target.closestGrips.Item3 != null) {
-                        EditorGUILayout.Vector2Field("Third Closest", target.closestGrips.Item3.transform.position);
-                    }
-                    if (target.closestGrips.Item4 != null) {
-                        EditorGUILayout.Vector2Field("Fourth Closest", target.closestGrips.Item4.transform.position);
-                    }
-                }
-            }
-    // --- /Methods ---
-}
-#endif
 
 /// <summary>
 /// Component in charge of the movements of the player in the 2D XY plane.
 /// TODO: Implement the more complex grip system.
 /// </summary>
-[RequireComponent(typeof(PlayerInput), typeof(Rigidbody2D), typeof(GripParser))]
-class PlayerMovement: MonoBehaviour {
+[RequireComponent(typeof(PlayerInput), typeof(Rigidbody2D))]
+public class PlayerMovement: MonoBehaviour {
+    private class CloseComparer: IComparer<float> {
+        public static CloseComparer instance = new CloseComparer();
+        public int Compare(float a, float b) { return a > b ? 1 : -1; }
+    }
+
     // ---  Attributes ---
-    // -- Serialized Attributes --
-    /// <summary>Movement speed of the player element.</summary>
-    [Tooltip("Speed of movement of the player element.")]
+        // -- Serialized Attributes --
+            /// <summary>Movement speed of the player element.</summary>
+            [Tooltip("Speed of movement of the player element.")]
             public float speed;
 
             /// <summary>Maximum distance to a grip.</summary>
@@ -69,11 +35,8 @@ class PlayerMovement: MonoBehaviour {
             /// <summary> Rigidbody of the player object. </summary>
             public new Rigidbody2D rigidbody { get; private set; }
 
-            /// <summary> Parser of the level's grip elements. </summary>
-            public GripParser parser { get; private set; }
-
             /// <summary> List of all the grips that are closest to the instance. </summary>
-            public System.Tuple<Grip, Grip, Grip, Grip> closestGrips { get; private set; } = new System.Tuple<Grip, Grip, Grip, Grip>(null, null, null, null);
+            public Grip[] closestGrips { get; private set; } = new Grip[0];
 
         // -- Private Attributes --
             /// <summary> Direction of the last input made by the user. </summary>
@@ -83,39 +46,22 @@ class PlayerMovement: MonoBehaviour {
     // --- /Attributes ---
 
     // ---  Methods ---
-    // -- Unity Events --
-    /// <summary>
-    /// Called when the component is instantiated in the scene.
-    /// </summary>
-    [ExecuteInEditMode]
+        // -- Unity Events --
+            /// <summary>
+            /// Called when the component is instantiated in the scene.
+            /// </summary>
             public void Awake() {
                 // Query the rigidbody component.
                 this.rigidbody = this.GetComponent<Rigidbody2D>();
-
-                // Get the grip parser method.
-                this.parser = this.GetComponent<GripParser>();
-                // Use the "reach" of the character.
-                this.parser.chunkSize = this.reach;
                 this.StartCoroutine(this._AfterEndOfFrame());
             }
 
             private IEnumerator _AfterEndOfFrame() {
-                    yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
 
-                    // Generate the grip chunk grid.
-                    this.parser.Generate();
-
-                    /*SpringJoint2D[] joints = new SpringJoint2D[] {
-                        this.gameObject.AddComponent<SpringJoint2D>(),
-                        this.gameObject.AddComponent<SpringJoint2D>(),
-                        this.gameObject.AddComponent<SpringJoint2D>(),
-                        this.gameObject.AddComponent<SpringJoint2D>(),
-                    };
-                    joints[0].autoConfigureDistance = false; joints[0].distance = 0;
-                    joints[1].autoConfigureDistance = false; joints[1].distance = 0;
-                    joints[2].autoConfigureDistance = false; joints[2].distance = 0;
-                    joints[3].autoConfigureDistance = false; joints[3].distance = 0;
-                    this._joints = joints;*/
+                // Generate the grip chunk grid.
+                GripParser parser = GripParser.GetInstance();
+                if (parser.gripChunks == null) { parser.Generate(this.reach); }
             }
 
             /// <summary>
@@ -141,14 +87,12 @@ class PlayerMovement: MonoBehaviour {
                 }
             }
 
-            public void OnDrop(){
-                if (falling)
-                {
-                    if (closestGrips.Item1 != null)
-                    {
+            public void OnDrop() {
+                if (falling) {
+                    if (closestGrips.Length > 0) {
                         falling = false;
                         rigidbody.gravityScale = 0;
-                rigidbody.bodyType = RigidbodyType2D.Static;
+                        rigidbody.bodyType = RigidbodyType2D.Static;
                     }
                 }
                 else {
@@ -158,8 +102,7 @@ class PlayerMovement: MonoBehaviour {
                 }
             }
 
-            public void OnBreak()
-            {
+            public void OnBreak() {
                 Rope.RopeComponent.onBreak.Invoke();
             }
 
@@ -181,17 +124,11 @@ class PlayerMovement: MonoBehaviour {
 
                         // Update the closest elements.
                         this._UpdateClosestGrips(this.rigidbody.position + this.rigidbody.velocity * Time.fixedDeltaTime);
-                        /*this._joints[0].enabled = this.closestGrips.Item1 != null;
-                        this._joints[0].connectedBody = this.closestGrips.Item1?.GetComponent<Rigidbody2D>();
-                        this._joints[1].enabled = this.closestGrips.Item2 != null;
-                        this._joints[1].connectedBody = this.closestGrips.Item2?.GetComponent<Rigidbody2D>();
-                        this._joints[2].enabled = this.closestGrips.Item3 != null;
-                        this._joints[2].connectedBody = this.closestGrips.Item3?.GetComponent<Rigidbody2D>();
-                        this._joints[3].enabled = this.closestGrips.Item4 != null;
-                        this._joints[3].connectedBody = this.closestGrips.Item4?.GetComponent<Rigidbody2D>();*/
 
                         // If there is no grip nearby stop any movement.
-                        if (this.closestGrips.Item1 == null){ this.rigidbody.velocity = Vector2.zero; this.rigidbody.bodyType = RigidbodyType2D.Static;  }
+                        if (this.closestGrips.Length <= 0){
+                            this.rigidbody.velocity = Vector2.zero; this.rigidbody.bodyType = RigidbodyType2D.Static;  
+                        }
                     }
                 }
                 else
@@ -199,7 +136,7 @@ class PlayerMovement: MonoBehaviour {
                     this._UpdateClosestGrips(this.rigidbody.position + this.rigidbody.velocity * Time.fixedDeltaTime);
                 }
 
-                this.playerIkHandler.Grip(this.closestGrips);
+                this.playerIkHandler?.Grip(this.closestGrips);
             }
 
             /// <summary> Draws the gizmos of the component. </summary>
@@ -212,23 +149,26 @@ class PlayerMovement: MonoBehaviour {
                 }
 
                 // Draw a line to all the closest grips.
-
                 Gizmos.color = Color.magenta;
-                if (this.closestGrips.Item1 != null) Gizmos.DrawLine(this.transform.position, this.closestGrips.Item1.transform.position);
-                if (this.closestGrips.Item2 != null) Gizmos.DrawLine(this.transform.position, this.closestGrips.Item2.transform.position);
-                if (this.closestGrips.Item3 != null) Gizmos.DrawLine(this.transform.position, this.closestGrips.Item3.transform.position);
-                if (this.closestGrips.Item4 != null) Gizmos.DrawLine(this.transform.position, this.closestGrips.Item4.transform.position);
+                for (int i = 0; i < this.closestGrips.Length; i++) {
+                    Gizmos.color = i > 2 ? Color.black : Color.magenta;
+                    if (this.closestGrips[i] != null) Gizmos.DrawLine(this.transform.position, this.closestGrips[i].transform.position);
+                }
             }
         
         // -- Private Methods --
             private void _UpdateClosestGrips(Vector2 position) {
-                // Clear the closest tuple.
-                this.closestGrips = new System.Tuple<Grip, Grip, Grip, Grip>(null, null, null, null);
+                // Ensure that the grip is set.
+                Dictionary<System.Tuple<int, int>, List<Grip>> dict = GripParser.GetInstance().gripChunks;
+                if (dict == null) { return; }
+
+                // Create a new sorted list.
+                SortedList<float, Grip> closest = new SortedList<float, Grip>(CloseComparer.instance);
 
                 // Get the current chunk location.
                 System.Tuple<int, int> chunk = new System.Tuple<int, int>(
-                    Mathf.FloorToInt(position.x / this.parser.chunkSize), 
-                    Mathf.FloorToInt(position.y / this.parser.chunkSize)
+                    Mathf.FloorToInt(position.x / this.reach), 
+                    Mathf.FloorToInt(position.y / this.reach)
                 );
 
                 // Loop through the nearest chunks.
@@ -236,36 +176,39 @@ class PlayerMovement: MonoBehaviour {
                 for (int j = chunk.Item2 - 1; j <= chunk.Item2 + 1; j++) {
                     System.Tuple<int, int> chunkKey = new System.Tuple<int, int>(i, j);
                     // Check if the chunk exists.
-                    if (!this.parser.gripChunks.ContainsKey(chunkKey)) { continue; }
+                    if (!dict.ContainsKey(chunkKey)) { continue; }
                     // Get the chunk's grips.
-                    IEnumerable<Grip> chunkGrips = this.parser.gripChunks[chunkKey];
+                    IEnumerable<Grip> chunkGrips = dict[chunkKey];
 
                     // Loop through the grips.
                     foreach (Grip grip in chunkGrips) {
+                        // If the grip is taken by another player, ignore it.
+                        if (grip.isGrabbed && !this.closestGrips.Contains(grip)) { continue; }
+
                         // Get the distance to the grip.
                         float distance = Vector2.Distance(grip.transform.position, position);
                         // If the grip is unreachable, ignore it.
                         if (distance > this.reach) { continue; }
 
-                        // Check if the grips is closest.
-                        if (this.closestGrips.Item1 == null || distance < Vector2.Distance(this.closestGrips.Item1.transform.position, position)) {
-                            // Update the grips.
-                            this.closestGrips = new System.Tuple<Grip, Grip, Grip, Grip>(grip, this.closestGrips.Item1, this.closestGrips.Item2, this.closestGrips.Item3);
-                        // Check if the grips is the second closest.
-                        } else if (this.closestGrips.Item2 == null || distance < Vector2.Distance(this.closestGrips.Item2.transform.position, position)) {
-                            // Update the grips.
-                            this.closestGrips = new System.Tuple<Grip, Grip, Grip, Grip>(this.closestGrips.Item1, grip, this.closestGrips.Item2, this.closestGrips.Item3);
-                        // Check if the grips is the third closest.
-                        } else if (this.closestGrips.Item3 == null || distance < Vector2.Distance(this.closestGrips.Item3.transform.position, position)) {
-                            // Update the grips.
-                            this.closestGrips = new System.Tuple<Grip, Grip, Grip, Grip>(this.closestGrips.Item1, this.closestGrips.Item2, grip, this.closestGrips.Item3);
-                        // Check if the grips is the fourth closest.
-                        } else if (this.closestGrips.Item4 == null || distance < Vector2.Distance(this.closestGrips.Item4.transform.position, position)) {
-                            // Update the grips.
-                            this.closestGrips = new System.Tuple<Grip, Grip, Grip, Grip>(this.closestGrips.Item1, this.closestGrips.Item2, this.closestGrips.Item3, grip);
-                        }
+                        // Add the grip to the list.
+                        closest.Add(distance, grip);
                     }
                 }
+
+                // Sort the list of grips by their distance.
+                Grip[] oldGrips = this.closestGrips.Take(2).ToArray(); List<Grip> released = new List<Grip>(oldGrips);
+                this.closestGrips =  closest.Select((KeyValuePair<float, Grip> kv) => kv.Value).ToArray();
+                Grip[] newGrips = this.closestGrips.Take(2).ToArray(); List<Grip> grabbed  = new List<Grip>(newGrips);
+
+                // Check which grips have changed.
+                foreach (Grip oldGrip in oldGrips) 
+                foreach (Grip newGrip in newGrips){
+                    if (oldGrip != null && oldGrip == newGrip) { released.Remove(oldGrip); grabbed.Remove(newGrip); }
+                }
+
+                // Call the grip and release events.
+                foreach (Grip releasedItem in released) { releasedItem.OnRelase(); }
+                foreach (Grip grabbedItem  in grabbed)  { grabbedItem.OnGrab(); }
             }
     // --- /Methods ---
 }
