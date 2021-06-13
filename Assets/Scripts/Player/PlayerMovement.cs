@@ -51,19 +51,19 @@ public class PlayerMovementInspector: Editor {
 [RequireComponent(typeof(PlayerInput), typeof(Rigidbody2D), typeof(GripParser))]
 class PlayerMovement: MonoBehaviour {
     // ---  Attributes ---
-        // -- Serialized Attributes --
-            /// <summary>Movement speed of the player element.</summary>
-            [Tooltip("Speed of movement of the player element.")]
+    // -- Serialized Attributes --
+    /// <summary>Movement speed of the player element.</summary>
+    [Tooltip("Speed of movement of the player element.")]
             public float speed;
 
             /// <summary>Maximum distance to a grip.</summary>
             [Tooltip("Maximum distance to a given grip.")]
             public float reach;
 
-            [Range(0f, 1f)]
-            public float slowPercentile;
+            public bool falling;
+            public float deadzone;
 
-    public bool falling;
+            public PlayerIK playerIkHandler;
 
         // -- Public Attributes --
             /// <summary> Rigidbody of the player object. </summary>
@@ -83,11 +83,11 @@ class PlayerMovement: MonoBehaviour {
     // --- /Attributes ---
 
     // ---  Methods ---
-        // -- Unity Events --
-            /// <summary>
-            /// Called when the component is instantiated in the scene.
-            /// </summary>
-            [ExecuteInEditMode]
+    // -- Unity Events --
+    /// <summary>
+    /// Called when the component is instantiated in the scene.
+    /// </summary>
+    [ExecuteInEditMode]
             public void Awake() {
                 // Query the rigidbody component.
                 this.rigidbody = this.GetComponent<Rigidbody2D>();
@@ -105,7 +105,7 @@ class PlayerMovement: MonoBehaviour {
                     // Generate the grip chunk grid.
                     this.parser.Generate();
 
-                    SpringJoint2D[] joints = new SpringJoint2D[] {
+                    /*SpringJoint2D[] joints = new SpringJoint2D[] {
                         this.gameObject.AddComponent<SpringJoint2D>(),
                         this.gameObject.AddComponent<SpringJoint2D>(),
                         this.gameObject.AddComponent<SpringJoint2D>(),
@@ -115,7 +115,7 @@ class PlayerMovement: MonoBehaviour {
                     joints[1].autoConfigureDistance = false; joints[1].distance = 0;
                     joints[2].autoConfigureDistance = false; joints[2].distance = 0;
                     joints[3].autoConfigureDistance = false; joints[3].distance = 0;
-                    this._joints = joints;
+                    this._joints = joints;*/
             }
 
             /// <summary>
@@ -124,7 +124,7 @@ class PlayerMovement: MonoBehaviour {
             /// <param name="input">Parameters of the provided movement direction.</param>
             public void OnMove(InputValue input) {
                 // If the component is disabled, do nothing.
-                if (!this.enabled) { return; }
+                if (!this.enabled || this.falling) { return; }
 
                 // Get the direction of the movement.
                 this._lastInput = input.Get<Vector2>();
@@ -132,23 +132,29 @@ class PlayerMovement: MonoBehaviour {
                 this.rigidbody.gravityScale = 0f;
 
                 // If the input is near zero.
-                if (this._lastInput.magnitude < 0.001f) {
+                if (this._lastInput.magnitude < this.deadzone) {
                     // Fix the player on the screen.
-                    // this.rigidbody.bodyType = RigidbodyType2D.Static;
+                    this.rigidbody.bodyType = RigidbodyType2D.Static;
                 } else {
                     // Allow the player to move on the screen.
-                    // this.rigidbody.bodyType = RigidbodyType2D.Dynamic;
+                    this.rigidbody.bodyType = RigidbodyType2D.Dynamic;
                 }
             }
 
             public void OnDrop(){
-                falling = !falling;
-                if(falling){
+                if (falling)
+                {
+                    if (closestGrips.Item1 != null)
+                    {
+                        falling = false;
+                        rigidbody.gravityScale = 0;
+                rigidbody.bodyType = RigidbodyType2D.Static;
+                    }
+                }
+                else {
+                    falling = true;
                     rigidbody.bodyType = RigidbodyType2D.Dynamic;
                     rigidbody.gravityScale = 1;
-                }
-                else{
-                    rigidbody.gravityScale = 0;
                 }
             }
 
@@ -161,29 +167,39 @@ class PlayerMovement: MonoBehaviour {
             /// Called on a fixed timer for physics simulations.
             /// </summary>
             public void FixedUpdate() {
-                if (rigidbody.gravityScale == 0)
+                if (rigidbody.gravityScale < 0.001f)
                 {
                     // Check if the body is dynamic.
                     if (this.rigidbody.bodyType == RigidbodyType2D.Dynamic)
                     {
+                        if(this.rigidbody.velocity != Vector2.zero)
+                        {
+                            this.rigidbody.velocity = Vector2.zero;
+                        }
                         // Cap the movement speed of the element.
                         this.rigidbody.velocity = this._lastInput * this.speed;
 
                         // Update the closest elements.
                         this._UpdateClosestGrips(this.rigidbody.position + this.rigidbody.velocity * Time.fixedDeltaTime);
-                        this._joints[0].enabled = this.closestGrips.Item1 != null;
+                        /*this._joints[0].enabled = this.closestGrips.Item1 != null;
                         this._joints[0].connectedBody = this.closestGrips.Item1?.GetComponent<Rigidbody2D>();
                         this._joints[1].enabled = this.closestGrips.Item2 != null;
                         this._joints[1].connectedBody = this.closestGrips.Item2?.GetComponent<Rigidbody2D>();
                         this._joints[2].enabled = this.closestGrips.Item3 != null;
                         this._joints[2].connectedBody = this.closestGrips.Item3?.GetComponent<Rigidbody2D>();
                         this._joints[3].enabled = this.closestGrips.Item4 != null;
-                        this._joints[3].connectedBody = this.closestGrips.Item4?.GetComponent<Rigidbody2D>();
+                        this._joints[3].connectedBody = this.closestGrips.Item4?.GetComponent<Rigidbody2D>();*/
 
                         // If there is no grip nearby stop any movement.
-                        if (this.closestGrips.Item1 == null) { this.rigidbody.velocity = Vector2.zero; }
+                        if (this.closestGrips.Item1 == null){ this.rigidbody.velocity = Vector2.zero; this.rigidbody.bodyType = RigidbodyType2D.Static;  }
                     }
                 }
+                else
+                {
+                    this._UpdateClosestGrips(this.rigidbody.position + this.rigidbody.velocity * Time.fixedDeltaTime);
+                }
+
+                this.playerIkHandler.Grip(this.closestGrips);
             }
 
             /// <summary> Draws the gizmos of the component. </summary>

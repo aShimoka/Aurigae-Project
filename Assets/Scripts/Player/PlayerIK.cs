@@ -21,6 +21,7 @@ public class PlayerIK: MonoBehaviour {
         // -- Unity Events --
             public void Awake() { this.animator = this.GetComponent<Animator>(); }
             public void OnAnimatorIK() {
+
                 // Set the target of the right hand.
                 if (this._rightHand != null) {
                     animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);

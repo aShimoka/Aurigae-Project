@@ -197,7 +197,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6352134929779769099, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
       propertyPath: m_Anchor.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6352134929779769099, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
       propertyPath: m_ConnectedAnchor.x
@@ -205,7 +205,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6352134929779769099, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
       propertyPath: m_ConnectedAnchor.y
-      value: -1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6352134929779769099, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
       propertyPath: m_ConnectedRigidBody
@@ -219,7 +219,8 @@ PrefabInstance:
       propertyPath: m_Offset.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6437688983501411278, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
 --- !u!4 &7619422798465287331 stripped
 Transform:
