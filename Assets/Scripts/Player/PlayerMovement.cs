@@ -49,7 +49,7 @@ public class PlayerMovementInspector: Editor {
 /// TODO: Implement the more complex grip system.
 /// </summary>
 [RequireComponent(typeof(PlayerInput), typeof(Rigidbody2D), typeof(GripParser))]
-class PlayerMovement: MonoBehaviour {
+public class PlayerMovement: MonoBehaviour {
     // ---  Attributes ---
     // -- Serialized Attributes --
     /// <summary>Movement speed of the player element.</summary>
@@ -141,14 +141,14 @@ class PlayerMovement: MonoBehaviour {
                 }
             }
 
-            public void OnDrop(){
+            public void OnDrop() {
                 if (falling)
                 {
                     if (closestGrips.Item1 != null)
                     {
                         falling = false;
                         rigidbody.gravityScale = 0;
-                rigidbody.bodyType = RigidbodyType2D.Static;
+                        rigidbody.bodyType = RigidbodyType2D.Static;
                     }
                 }
                 else {
@@ -199,7 +199,7 @@ class PlayerMovement: MonoBehaviour {
                     this._UpdateClosestGrips(this.rigidbody.position + this.rigidbody.velocity * Time.fixedDeltaTime);
                 }
 
-                this.playerIkHandler.Grip(this.closestGrips);
+                this.playerIkHandler?.Grip(this.closestGrips);
             }
 
             /// <summary> Draws the gizmos of the component. </summary>

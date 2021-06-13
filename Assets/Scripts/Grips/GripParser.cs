@@ -26,7 +26,7 @@ public class GripParserInspector: Editor {
 /// Component used to detect all the grips of the level and generated a chunkified list of elements.
 /// Used to optimize the player movement algorithm.
 /// </summary>
-class GripParser: MonoBehaviour {
+public class GripParser: MonoBehaviour {
     // ---  Attributes ---
         // -- Public Attributes --
             /// <summary> Size of a given chunk. </summary>
