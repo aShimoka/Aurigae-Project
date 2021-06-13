@@ -44,8 +44,9 @@ public class PlayerCamera: MonoBehaviour {
                 if (this.ease > 0.001f) {
                     // Interpolate the position between the vectors.
                     this.transform.position = Vector3.Lerp(this.previousLocation, this.average, Mathf.SmoothStep(1, 0, this.ease));
-                    this.ease -= Time.deltaTime / this.transitionTime;
+                    this.ease -= Time.unscaledDeltaTime / this.transitionTime;
                 } else {
+                    Time.timeScale = 1;
                     this.transform.position = this.average;
                 }
             }
@@ -55,6 +56,6 @@ public class PlayerCamera: MonoBehaviour {
             /// Starts following the provided list of players.
             /// </summary>
             /// <param name="players">The list of players to follow.</param>
-            public void Follow(params Player[] players) { this.players = players; this.enabled = true; this.ease = 1f; this.previousLocation = this.transform.position; }
+            public void Follow(params Player[] players) { Time.timeScale = 0; this.players = players; this.enabled = true; this.ease = 1f; this.previousLocation = this.transform.position; }
     // --- /Methods ---
 }
