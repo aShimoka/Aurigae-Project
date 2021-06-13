@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Controller.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Misc/Controller.inputactions'
 
 using System;
 using System.Collections;
@@ -38,6 +38,14 @@ public class @Controller : IInputActionCollection, IDisposable
                     ""name"": ""Break"",
                     ""type"": ""Button"",
                     ""id"": ""64be514b-fab8-47e2-829a-fa05a9c9c871"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Swap"",
+                    ""type"": ""Button"",
+                    ""id"": ""378c2a38-f5ed-4f31-8df9-4b9abcd9a3a6"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -142,6 +150,28 @@ public class @Controller : IInputActionCollection, IDisposable
                     ""action"": ""Break"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4bff8b91-a3a1-4910-9de4-162b922db377"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Swap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2eeb4db7-80c2-4334-98d8-5a6c152ee7b7"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Swap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -153,6 +183,7 @@ public class @Controller : IInputActionCollection, IDisposable
         m_Whitebox_Move = m_Whitebox.FindAction("Move", throwIfNotFound: true);
         m_Whitebox_Drop = m_Whitebox.FindAction("Drop", throwIfNotFound: true);
         m_Whitebox_Break = m_Whitebox.FindAction("Break", throwIfNotFound: true);
+        m_Whitebox_Swap = m_Whitebox.FindAction("Swap", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -205,6 +236,7 @@ public class @Controller : IInputActionCollection, IDisposable
     private readonly InputAction m_Whitebox_Move;
     private readonly InputAction m_Whitebox_Drop;
     private readonly InputAction m_Whitebox_Break;
+    private readonly InputAction m_Whitebox_Swap;
     public struct WhiteboxActions
     {
         private @Controller m_Wrapper;
@@ -212,6 +244,7 @@ public class @Controller : IInputActionCollection, IDisposable
         public InputAction @Move => m_Wrapper.m_Whitebox_Move;
         public InputAction @Drop => m_Wrapper.m_Whitebox_Drop;
         public InputAction @Break => m_Wrapper.m_Whitebox_Break;
+        public InputAction @Swap => m_Wrapper.m_Whitebox_Swap;
         public InputActionMap Get() { return m_Wrapper.m_Whitebox; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -230,6 +263,9 @@ public class @Controller : IInputActionCollection, IDisposable
                 @Break.started -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnBreak;
                 @Break.performed -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnBreak;
                 @Break.canceled -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnBreak;
+                @Swap.started -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnSwap;
+                @Swap.performed -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnSwap;
+                @Swap.canceled -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnSwap;
             }
             m_Wrapper.m_WhiteboxActionsCallbackInterface = instance;
             if (instance != null)
@@ -243,6 +279,9 @@ public class @Controller : IInputActionCollection, IDisposable
                 @Break.started += instance.OnBreak;
                 @Break.performed += instance.OnBreak;
                 @Break.canceled += instance.OnBreak;
+                @Swap.started += instance.OnSwap;
+                @Swap.performed += instance.OnSwap;
+                @Swap.canceled += instance.OnSwap;
             }
         }
     }
@@ -252,5 +291,6 @@ public class @Controller : IInputActionCollection, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnDrop(InputAction.CallbackContext context);
         void OnBreak(InputAction.CallbackContext context);
+        void OnSwap(InputAction.CallbackContext context);
     }
 }
