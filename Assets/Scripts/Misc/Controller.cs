@@ -112,7 +112,7 @@ public class @Controller : IInputActionCollection, IDisposable
                     ""id"": ""c36cf046-ec7b-4dc8-aaff-6502fcce0f8f"",
                     ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
-                    ""processors"": """",
+                    ""processors"": ""StickDeadzone"",
                     ""groups"": """",
                     ""action"": ""Move"",
                     ""isComposite"": false,

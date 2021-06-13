@@ -26,8 +26,6 @@ public class PlayerMovement: MonoBehaviour {
             [Tooltip("Maximum distance to a given grip.")]
             public float reach;
 
-            public bool falling;
-            public float deadzone;
 
             public PlayerIK playerIkHandler;
 
@@ -39,6 +37,8 @@ public class PlayerMovement: MonoBehaviour {
             public Grip[] closestGrips { get; private set; } = new Grip[0];
 
             public Rope.RopeComponent rope;
+            [System.NonSerialized]
+            public bool falling;
 
         // -- Private Attributes --
             /// <summary> Direction of the last input made by the user. </summary>
@@ -90,7 +90,7 @@ public class PlayerMovement: MonoBehaviour {
                 this.rigidbody.gravityScale = 0f;
 
                 // If the input is near zero.
-                if (this._lastInput.magnitude < this.deadzone) {
+                if (this._lastInput.magnitude < 0) {
                     // Fix the player on the screen.
                     this.rigidbody.bodyType = RigidbodyType2D.Static;
                 } else {
