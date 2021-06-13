@@ -75,9 +75,15 @@ class PlayerMovement: MonoBehaviour {
             /// <summary> List of all the grips that are closest to the instance. </summary>
             public System.Tuple<Grip, Grip, Grip, Grip> closestGrips { get; private set; } = new System.Tuple<Grip, Grip, Grip, Grip>(null, null, null, null);
 
+            public Rope.RopeComponent rope;
+
         // -- Private Attributes --
             /// <summary> Direction of the last input made by the user. </summary>
             private Vector2 _lastInput;
+
+            private Vector2 _lastPosition;
+
+            public System.DateTime? _breakPointBegin;
 
             private Joint2D[] _joints;
     // --- /Attributes ---
@@ -89,6 +95,12 @@ class PlayerMovement: MonoBehaviour {
     /// </summary>
     [ExecuteInEditMode]
             public void Awake() {
+                if(rope != null)
+                {
+                    Debug.Log("Rope found!");
+                    
+                }
+
                 // Query the rigidbody component.
                 this.rigidbody = this.GetComponent<Rigidbody2D>();
 
@@ -160,7 +172,8 @@ class PlayerMovement: MonoBehaviour {
 
             public void OnBreak()
             {
-                Rope.RopeComponent.onBreak.Invoke();
+                Debug.Log("Break input");
+                rope.onBreak.Invoke();
             }
 
             /// <summary>
@@ -172,7 +185,7 @@ class PlayerMovement: MonoBehaviour {
                     // Check if the body is dynamic.
                     if (this.rigidbody.bodyType == RigidbodyType2D.Dynamic)
                     {
-                        if(this.rigidbody.velocity != Vector2.zero)
+                        if (this.rigidbody.velocity != Vector2.zero)
                         {
                             this.rigidbody.velocity = Vector2.zero;
                         }
@@ -191,7 +204,38 @@ class PlayerMovement: MonoBehaviour {
                         this._joints[3].connectedBody = this.closestGrips.Item4?.GetComponent<Rigidbody2D>();*/
 
                         // If there is no grip nearby stop any movement.
-                        if (this.closestGrips.Item1 == null){ this.rigidbody.velocity = Vector2.zero; this.rigidbody.bodyType = RigidbodyType2D.Static;  }
+                        if (this.closestGrips.Item1 == null) { this.rigidbody.velocity = Vector2.zero; this.rigidbody.bodyType = RigidbodyType2D.Static; }
+                        /*else if(this._lastInput.magnitude >= deadzone){
+                            // Rope breakpoint checking
+                            if((_lastPosition - rigidbody.position).magnitude < 0.05f)
+                            {
+                                Debug.Log((_lastPosition - rigidbody.position).magnitude + " - " + _breakPointBegin);
+                                if(_breakPointBegin != null)
+                                {                                    
+                                    if((System.DateTime.Now - _breakPointBegin)?.Seconds > 1)
+                                    {
+
+                                        rope.onBreak.Invoke();
+                                    }
+
+                                }
+                                else
+                                {
+                                    _breakPointBegin = System.DateTime.Now;
+                                }
+                            }
+                            else
+                            {
+                                _breakPointBegin = null;
+                            }
+                        }
+                        else {
+                            _breakPointBegin = null;
+                        }
+                    }
+                    else {
+                        _breakPointBegin = null;
+                    }*/
                     }
                 }
                 else
@@ -200,6 +244,7 @@ class PlayerMovement: MonoBehaviour {
                 }
 
                 this.playerIkHandler.Grip(this.closestGrips);
+                _lastPosition = rigidbody.position;
             }
 
             /// <summary> Draws the gizmos of the component. </summary>
