@@ -50,6 +50,9 @@ public class Player: MonoBehaviour {
 
             [System.NonSerialized]
             public PlayerInput playerInput;
+
+            [System.NonSerialized]
+            public CheckpointGrip lastCheckpoint = null;
     // --- /Attributes ---
 
     // ---  Methods ---
@@ -69,5 +72,14 @@ public class Player: MonoBehaviour {
                     this.camera.Follow(this.other); this.playerInput.enabled = false; this.other.playerInput.enabled = true; 
                 }
             }
+
+            public void SetCheckpoint(CheckpointGrip checkpoint) { this.lastCheckpoint = checkpoint; }
+            
+            public void Die() { 
+                this.transform.position = this.lastCheckpoint.transform.position; 
+                Rope.RopeComponent rope = Object.FindObjectOfType<Rope.RopeComponent>();
+                rope.BreakRope();
+            }
+            public void OnReset() { this.Die(); this.other.Die(); }
     // --- /Methods ---
 }

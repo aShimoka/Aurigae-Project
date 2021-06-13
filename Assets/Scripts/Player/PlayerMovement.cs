@@ -90,7 +90,7 @@ public class PlayerMovement: MonoBehaviour {
                 this.rigidbody.gravityScale = 0f;
 
                 // If the input is near zero.
-                if (this._lastInput.magnitude < 0) {
+                if (this._lastInput.magnitude < 0.001f) {
                     // Fix the player on the screen.
                     this.rigidbody.bodyType = RigidbodyType2D.Static;
                 } else {

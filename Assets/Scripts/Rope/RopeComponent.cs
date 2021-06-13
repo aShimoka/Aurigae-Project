@@ -29,7 +29,9 @@ namespace Rope
         public Color baseColor;
         public Color warningColor = Color.red;
 
-        public void Awake()
+        public void Awake() { this.Generate(); }
+        
+        public void Generate()
         {
             _bones.Add(Start);
             _bones.Add(End);

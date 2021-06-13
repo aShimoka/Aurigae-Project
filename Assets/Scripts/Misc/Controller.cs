@@ -49,6 +49,14 @@ public class @Controller : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Reset"",
+                    ""type"": ""Button"",
+                    ""id"": ""51ab83e3-0722-47dd-bfed-cb8fffa0a4e0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -172,6 +180,28 @@ public class @Controller : IInputActionCollection, IDisposable
                     ""action"": ""Swap"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1aaacfdc-f946-4c3a-bbe5-022230f82ea8"",
+                    ""path"": ""<Keyboard>/p"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reset"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2ff3ba66-5e8a-4b9c-a613-6327528df49c"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reset"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -184,6 +214,7 @@ public class @Controller : IInputActionCollection, IDisposable
         m_Whitebox_Drop = m_Whitebox.FindAction("Drop", throwIfNotFound: true);
         m_Whitebox_Break = m_Whitebox.FindAction("Break", throwIfNotFound: true);
         m_Whitebox_Swap = m_Whitebox.FindAction("Swap", throwIfNotFound: true);
+        m_Whitebox_Reset = m_Whitebox.FindAction("Reset", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -237,6 +268,7 @@ public class @Controller : IInputActionCollection, IDisposable
     private readonly InputAction m_Whitebox_Drop;
     private readonly InputAction m_Whitebox_Break;
     private readonly InputAction m_Whitebox_Swap;
+    private readonly InputAction m_Whitebox_Reset;
     public struct WhiteboxActions
     {
         private @Controller m_Wrapper;
@@ -245,6 +277,7 @@ public class @Controller : IInputActionCollection, IDisposable
         public InputAction @Drop => m_Wrapper.m_Whitebox_Drop;
         public InputAction @Break => m_Wrapper.m_Whitebox_Break;
         public InputAction @Swap => m_Wrapper.m_Whitebox_Swap;
+        public InputAction @Reset => m_Wrapper.m_Whitebox_Reset;
         public InputActionMap Get() { return m_Wrapper.m_Whitebox; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -266,6 +299,9 @@ public class @Controller : IInputActionCollection, IDisposable
                 @Swap.started -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnSwap;
                 @Swap.performed -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnSwap;
                 @Swap.canceled -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnSwap;
+                @Reset.started -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnReset;
+                @Reset.performed -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnReset;
+                @Reset.canceled -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnReset;
             }
             m_Wrapper.m_WhiteboxActionsCallbackInterface = instance;
             if (instance != null)
@@ -282,6 +318,9 @@ public class @Controller : IInputActionCollection, IDisposable
                 @Swap.started += instance.OnSwap;
                 @Swap.performed += instance.OnSwap;
                 @Swap.canceled += instance.OnSwap;
+                @Reset.started += instance.OnReset;
+                @Reset.performed += instance.OnReset;
+                @Reset.canceled += instance.OnReset;
             }
         }
     }
@@ -292,5 +331,6 @@ public class @Controller : IInputActionCollection, IDisposable
         void OnDrop(InputAction.CallbackContext context);
         void OnBreak(InputAction.CallbackContext context);
         void OnSwap(InputAction.CallbackContext context);
+        void OnReset(InputAction.CallbackContext context);
     }
 }

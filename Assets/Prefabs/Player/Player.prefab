@@ -1,5 +1,17 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &4083248184963609637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 254564911871696139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71c8e0c9392dd4fe59a6c396dcda376a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8337963167683471103
 GameObject:
   m_ObjectHideFlags: 0
@@ -13,6 +25,7 @@ GameObject:
   - component: {fileID: 8337963167683471091}
   - component: {fileID: 8337963167683471090}
   - component: {fileID: 8337963167683471089}
+  - component: {fileID: 399600039978317066}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -73,7 +86,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8337963167683471103}
-  m_BodyType: 0
+  m_BodyType: 2
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -98,9 +111,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b1c29cfd369244a0b8d2832d83f4fa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
-  reach: 2
-  playerIkHandler: {fileID: 0}
+  speed: 5
+  reach: 1.5
+  playerIkHandler: {fileID: 4083248184963609637}
+  rope: {fileID: 0}
 --- !u!114 &8337963167683471089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,6 +129,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   other: {fileID: 0}
   isDefaultPlayer: 1
+--- !u!70 &399600039978317066
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8337963167683471103}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0.5}
+  m_Size: {x: 1, y: 2}
+  m_Direction: 0
 --- !u!1001 &1101425472390635610
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -176,6 +206,11 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: f06e57123bdca4511973450dd1af0eab, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 84f9906acf9900f49b8a1867fd7d3810, type: 3}
+--- !u!1 &254564911871696139 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 84f9906acf9900f49b8a1867fd7d3810, type: 3}
+  m_PrefabInstance: {fileID: 1101425472390635610}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &631548332796561329 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 84f9906acf9900f49b8a1867fd7d3810, type: 3}
