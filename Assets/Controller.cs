@@ -33,6 +33,14 @@ public class @Controller : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Break"",
+                    ""type"": ""Button"",
+                    ""id"": ""64be514b-fab8-47e2-829a-fa05a9c9c871"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -123,6 +131,17 @@ public class @Controller : IInputActionCollection, IDisposable
                     ""action"": ""Drop"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""26d72533-012f-4a34-ab75-33994ef6713e"",
+                    ""path"": ""<Keyboard>/b"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Break"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -133,6 +152,7 @@ public class @Controller : IInputActionCollection, IDisposable
         m_Whitebox = asset.FindActionMap("Whitebox", throwIfNotFound: true);
         m_Whitebox_Move = m_Whitebox.FindAction("Move", throwIfNotFound: true);
         m_Whitebox_Drop = m_Whitebox.FindAction("Drop", throwIfNotFound: true);
+        m_Whitebox_Break = m_Whitebox.FindAction("Break", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -184,12 +204,14 @@ public class @Controller : IInputActionCollection, IDisposable
     private IWhiteboxActions m_WhiteboxActionsCallbackInterface;
     private readonly InputAction m_Whitebox_Move;
     private readonly InputAction m_Whitebox_Drop;
+    private readonly InputAction m_Whitebox_Break;
     public struct WhiteboxActions
     {
         private @Controller m_Wrapper;
         public WhiteboxActions(@Controller wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Whitebox_Move;
         public InputAction @Drop => m_Wrapper.m_Whitebox_Drop;
+        public InputAction @Break => m_Wrapper.m_Whitebox_Break;
         public InputActionMap Get() { return m_Wrapper.m_Whitebox; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -205,6 +227,9 @@ public class @Controller : IInputActionCollection, IDisposable
                 @Drop.started -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnDrop;
                 @Drop.performed -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnDrop;
                 @Drop.canceled -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnDrop;
+                @Break.started -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnBreak;
+                @Break.performed -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnBreak;
+                @Break.canceled -= m_Wrapper.m_WhiteboxActionsCallbackInterface.OnBreak;
             }
             m_Wrapper.m_WhiteboxActionsCallbackInterface = instance;
             if (instance != null)
@@ -215,6 +240,9 @@ public class @Controller : IInputActionCollection, IDisposable
                 @Drop.started += instance.OnDrop;
                 @Drop.performed += instance.OnDrop;
                 @Drop.canceled += instance.OnDrop;
+                @Break.started += instance.OnBreak;
+                @Break.performed += instance.OnBreak;
+                @Break.canceled += instance.OnBreak;
             }
         }
     }
@@ -223,5 +251,6 @@ public class @Controller : IInputActionCollection, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnDrop(InputAction.CallbackContext context);
+        void OnBreak(InputAction.CallbackContext context);
     }
 }

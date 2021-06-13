@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4812145272362154991}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7619422798465287331}
@@ -157,7 +157,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5159987319281685726, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.996
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5159987319281685726, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
       propertyPath: m_LocalPosition.z
@@ -196,18 +196,31 @@ PrefabInstance:
       value: Bone
       objectReference: {fileID: 0}
     - target: {fileID: 6352134929779769099, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
+      propertyPath: m_Anchor.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6352134929779769099, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
       propertyPath: m_ConnectedAnchor.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6352134929779769099, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
       propertyPath: m_ConnectedAnchor.y
-      value: -1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6352134929779769099, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
       propertyPath: m_ConnectedRigidBody
       value: 
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 6437688983501411278, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
+      propertyPath: m_Offset.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6437688983501411278, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
+      propertyPath: m_Offset.y
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 6437688983501411278, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: cadf2a19595f44767a0f819dc70ed6ee, type: 3}
 --- !u!4 &7619422798465287331 stripped
 Transform:
