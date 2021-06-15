@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.UI;
 
 
 /// <summary>
@@ -49,6 +50,11 @@ public class PlayerMovement: MonoBehaviour {
             public System.DateTime? _breakPointBegin;
 
             private Joint2D[] _joints;
+
+            public Image energyBar;
+            private float _energy;
+
+            private System.DateTime? _energyTime;
     // --- /Attributes ---
 
     // ---  Methods ---
@@ -101,13 +107,22 @@ public class PlayerMovement: MonoBehaviour {
 
             public void OnDrop() {
                 if (falling) {
-                    if (closestGrips.Length > 0) {
+                    if (!(rope.broken && _energy < 0) && closestGrips.Length > 0) {
+                        if (!rope.broken)
+                        {
+                            _energyTime = null;
+                        }
                         falling = false;
                         rigidbody.gravityScale = 0;
                         rigidbody.bodyType = RigidbodyType2D.Static;
+                        _energy = 0;
                     }
                 }
                 else {
+                    if (!rope.broken)
+                    {
+                        _energyTime = System.DateTime.Now;
+                    }
                     falling = true;
                     rigidbody.bodyType = RigidbodyType2D.Dynamic;
                     rigidbody.gravityScale = 1;
@@ -151,6 +166,40 @@ public class PlayerMovement: MonoBehaviour {
 
                 this.playerIkHandler.Grip(this.closestGrips);
                 _lastPosition = rigidbody.position;
+            
+                UpdateEnergy();
+            }
+
+            public void UpdateEnergy()
+            {
+                if (_energyTime != null) {
+                    var duration = (System.DateTime.Now - _energyTime);
+                    _energy = (10000 - (float)duration?.Seconds * 1000 - (float)duration?.Milliseconds)/10000;
+
+                    if (_energy <= 0)
+                    {
+                        _energyTime = null;
+                        if (rope.broken)
+                        {
+                            OnDrop();
+                        }
+                        else
+                        {
+                            rope.BreakRope();
+                        }
+                    }
+                }
+                else
+                {
+                    if (rope.broken)
+                    {
+                        _energyTime = System.DateTime.Now;
+                    }
+                }
+                
+                
+
+                energyBar.fillAmount = _energy;
             }
 
             /// <summary> Draws the gizmos of the component. </summary>
